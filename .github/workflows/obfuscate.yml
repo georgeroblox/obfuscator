@@ -1,1 +1,28 @@
+name: Obfuscate
 
+on:
+  workflow_dispatch:
+    inputs:
+      code:
+        description: "Lua code"
+        required: true
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Lua
+        run: sudo apt-get install -y lua5.4
+
+      - name: Run obfuscator
+        run: |
+          echo "${{ github.event.inputs.code }}" > input.lua
+          lua obfuscator/obfuscator.lua < input.lua > output.lua
+
+      - name: Upload result
+        uses: actions/upload-artifact@v3
+        with:
+          name: obfuscated
+          path: output.lua
